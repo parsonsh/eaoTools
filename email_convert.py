@@ -29,16 +29,15 @@ with open(args.files,'r') as datain: # better (will close the file after)
 	dataout=''.join(["reformatted-",args.files])
 	print ("	file produced: {}\n".format(dataout)) # this is my input file
 	with open(dataout,'w') as dataout:
-		line = datain.readline()		# read the data line by line
-		while line[0] == '#':			# any line that is a heading
-			line = datain.readline()	# readline and move on
 
-		count = 0 # each 10 lines add a line break
 		for line in datain:
-			values = line.strip().split()
-			inputs = len(values)
-			names = values[0:(inputs-1)]
-			allnames = ' '.join(names)
-			email = values[(inputs-1)]
-#			print ("{} <{}>".format(allnames,email))
-			dataout.write("{} <{}>,\n".format(allnames,email))
+			if (line[0] == '#'):
+				pass
+			else:
+				values = line.strip().split()
+				inputs = len(values)
+				names = values[0:(inputs-1)]
+				allnames = ' '.join(names)
+				email = values[(inputs-1)]
+				print ("{} <{}>".format(allnames,email))
+				dataout.write("{} <{}>,\n".format(allnames,email))
