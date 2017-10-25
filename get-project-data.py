@@ -12,7 +12,7 @@ a project and produce output files containin the raw data
 # export  SYBASE=/local/progs/sybase
 # export PYTHONPATH=/jac_sw/omp/python/lib:$PYTHONPATH
 # tcshrc
-# setenv SYBASE=/local/progs/sybase
+# setenv SYBASE /local/progs/sybase
 # setenv PYTHONPATH /jac_sw/omp/python/lib
 
 

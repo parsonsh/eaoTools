@@ -2,6 +2,12 @@
 
 This is a respository for all useful scrips I use for my EAO/JCMT work.
 
+
+## allreduce-sc2.pl
+
+script used to reduce SCUBA-2 data when provided <ut> <obsid> and <name>. 
+data reduced using makemap with the dimmconfig already specified in the script
+
 ### calc-density.py
 
 I want this to be the function I call in future for all future density calculations
