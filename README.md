@@ -54,6 +54,10 @@ This script will grab all data associated with a project and produce output file
 
 * requires OMP database access (i.e. only runs at EAO)
 
+### pirep-collate.py
+
+Script to collate the information produced by the pi reports and produce stats/plots by semester
+
 ### physical-parameters.py
 
 Script to caluclate a bunch of physical parameters and to plot vs contamination.
