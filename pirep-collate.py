@@ -97,86 +97,112 @@ print (myfiles)
 #      grabbing info from report files         #
 # -------------------------------------------- #	
 
+ratings = {'not applicable': None, 'very dissatisfied': 0, 'dissatisfied': 1, 'satisfied': 2, 'very satisfied': 3, 'very useful':3, 'in prep':3}
 
 
-def ratingvalue(stringprovided,wheretosearch):
-	'''
-	the function is used to convert a qualitive rating 
-	into a quantative value.
-	'''
-	ratings = {'not applicable': None, 'very dissatisfied': 0, 'dissatisfied': 1, 'satisfied': 2, 'very satisfied': 3}
-	if stringprovided in wheretosearch:
-		print (stringprovided)
-		print (wheretosearch)
-		if ":   very satisfied" in wheretosearch:
-			ratevalue = ratings['very satisfied']
-		if  ":   satisfied" in wheretosearch:
-			ratevalue = ratings['satisfied']
-		if  ":   dissatisfied" in wheretosearch:
-			ratevalue = ratings['dissatisfied']
-		if ":   very dissatisfied" in wheretosearch:
-			ratevalue = ratings['very dissatisfied']
-		if  ":   not applicable" in wheretosearch:
-			ratevalue = ratings['not applicable']
-		print (ratevalue)
-#		return ratevalue
 
+# going to use tables to add data row by row to a new table:
 
-	
+from astropy.table import Table, Column
+import numpy as np
+
+t = Table()
+t = Table(names=('Completion', 'HoursRemaining', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
+# t = Table(names=('projid','Completion', 'HoursRemaining', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('str','float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
+
 
 # maybe need to define a function to turn a line into a rating.
 
 for x in myfiles:
 	with open(x) as input_data:
 		print (x)
+		# setting all variables to None before going into loop
+		projid=percom=hourscom=rateproposalease=ratepropdocs=ratesc2itc=ratehetitc=ratepross=rateotinstall=rateotease=rateotdocs=rateotsupport=rateompdownload=ratecadcdownload=ratestarinstall=ratestarlink=ratehetdocs=ratesc2docs=rateoracdr=ratescienceproduct=ratedataquality=ratecompletion=ratepublicationprob=ratefop=rateomp=rateweb=None
 		for line in input_data:
+			if "TEST" in line: #IGNORE ANY TEST FILES THAT EXIST 
+# 				print ("need to skip TEST FOUND!!!!!")
+				break
+			if "Reference number" in line:
+				projid = repr((line.split(":"))[1].strip())
+# 				print (projid)
+# 				print (type(projid))
 			if "Percentage Completed:" in line:
-				percom = (line[-7:-2]).strip()
-				print ("completion = {0}%".format(percom))
+				percom = float((line[-7:-2]).strip())
+			if "Completion of project in terms of hours:" in line:
+				hourscom = float((line.split(":"))[1].strip())
+ 				
+			## PROPOSAL SYSTEM RATINGS
 
-#			if "Please rate proposal system ease of" in line:
-#				rateline = line				
-#			if "OT ease of use.:" in line:
-#			if "OT documentation.:" in line: 
-#			if "OT support.:" in line:  
-#			if "OMP interface to download your data.:" in line: 
-#			if "CADC interface for searching the JCMT Science Archive and downloading data.:" in line:
-#			if "Starlink software installation.:" in line:
-#			if "Starlink software packages for analysis, reduction, and visualisation.:" in line:
-#			if "heterodyne data reduction documentation.:" in line: 
-#			if "SCUBA-2 data reduction documentation.:" in line: 
-#			if "data reduction pipelines (ORAC-DR).:" in line: 
-#			if "science-products of the data reduction pipelines.:" in line:  
-
-
- 			ratedataquality = ratingvalue("quality of data obtained.:",line)
- 	#		print(ratedataquality)
-
-
-# 			if "quality of data obtained.:" in line:
-# 				rateline = line
-# 				print (rateline)
-# 				if ":   very satisfied" in rateline:
-# 					print ('very satisfied')
-# 					ratedataquality = ratings['very satisfied']
-# 				if  ":   satisfied" in rateline:
-# 					ratedataquality = ratings['satisfied']
-# 				if  ":   dissatisfied" in rateline:
-# 					ratedataquality = ratings['dissatisfied']
-# 				if ":   very dissatisfied" in rateline:
-# 					ratedataquality = ratings['very dissatisfied']
-# 				if  ":   not applicable" in rateline:
-# 					ratedataquality = ratings['not applicable']
-# 				print (ratedataquality)
+			if "Please rate proposal system ease of" in line:
+				rateproposalease = ratings[(line.split(":"))[1].strip()] 
+			if "rate documentation.:" in line: ####
+				ratepropdocs = ratings[(line.split(":"))[1].strip()]
+			if "SCUBA-2 ITC" in line: ####
+				ratesc2itc = ratings[(line.split(":"))[1].strip()]
+			if "heterodyne ITC" in line: ####
+				ratehetitc = ratings[(line.split(":"))[1].strip()]
+			if "observatory staff support" in line: ####
+				ratepross = ratings[(line.split(":"))[1].strip()]
 				
-#			if "satisfied were you with the level of communication with your Friend of Project.:" in line:
-			rateomp = ratingvalue("ease and usefulness of OMP project home page.:",line)
-			rateweb = ratingvalue("satisfied were you with the web site.:",line)
+			## JCMT OT - MSB PREPARATION
+			
+			if "OT installation" in line: 
+				rateotinstall =  ratings[(line.split(":"))[1].strip()] 
+			if "OT ease of use.:" in line:
+				rateotease =  ratings[(line.split(":"))[1].strip()] 
+			if "OT documentation.:" in line: 
+				rateotdocs =  ratings[(line.split(":"))[1].strip()] 
+			if "OT support.:" in line:  
+				rateotsupport =  ratings[(line.split(":"))[1].strip()] 
+				
+			## DATA ACQUISITION/DATA REDUCTION
+			
+			if "OMP interface to download your data.:" in line: 
+				rateompdownload = ratings[(line.split(":"))[1].strip()] 
+			if "CADC interface for searching the JCMT Science Archive and downloading data.:" in line:
+				ratecadcdownload = ratings[(line.split(":"))[1].strip()] 
+			if "Starlink software installation.:" in line:
+				ratestarinstall = ratings[(line.split(":"))[1].strip()] 
+			if "Starlink software packages for analysis, reduction, and visualisation.:" in line:
+				ratestarlink = ratings[(line.split(":"))[1].strip()] 
+			if "heterodyne data reduction documentation.:" in line: 
+				ratehetdocs = ratings[(line.split(":"))[1].strip()] 
+			if "SCUBA-2 data reduction documentation.:" in line: 
+				ratesc2docs = ratings[(line.split(":"))[1].strip()] 
+			if "data reduction pipelines (ORAC-DR).:" in line: 
+				rateoracdr = ratings[(line.split(":"))[1].strip()] 
+			if "science-products of the data reduction pipelines.:" in line:  
+				ratescienceproduct = ratings[(line.split(":"))[1].strip()] 
+			
+			## SCIENCE
+				
+			if "quality of data obtained.:" in line:
+	 			ratedataquality = ratings[(line.split(":"))[1].strip()] 
+	 		if "usefulness of data collected/level of completeness" in line:
+	 			 ratecompletion = ratings[(line.split(":"))[1].strip()] 
+	 		if "likelihood of data leading to publication" in line: 
+	 		 	ratepublicationprob = ratings[(line.split(":"))[1].strip()] 
+	 			
+	 		## GENERAL
+	 		
+			if "level of communication with your Friend of Project.:" in line:
+# 				print (line)
+				ratefop = ratings[(line.split(":"))[1].strip()] 
+			if "ease and usefulness of OMP project home page.:" in line:
+# 				print(line)
+	 			rateomp = ratings[(line.split(":"))[1].strip()] 
+	 		if "satisfied were you with the web site.:" in line:
+	 			rateweb = ratings[(line.split(":"))[1].strip()] 		
 
-#Completion of project in terms of hours:   0
-# Please rate usefulness of data collected/level of completeness.: 
+		# saving the ratings from each file into my new table:
+	 	t.add_row((percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
+# 	 	t.add_row((projid,percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 
-# Please rate likelihood of data leading to publication.: 	
+	 		 	
+print(t)
+
+
+
 
 # -------------------------------------------- #
 #      plotting info from report files         #
