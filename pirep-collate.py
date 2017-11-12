@@ -136,13 +136,14 @@ for x in myfiles:
 
 			if "Please rate proposal system ease of" in line:
 				rateproposalease = ratings[(line.split(":"))[1].strip()] 
-			if "rate documentation.:" in line: ####
+			if "rate documentation.:" in line:
 				ratepropdocs = ratings[(line.split(":"))[1].strip()]
-			if "SCUBA-2 ITC" in line: ####
+			if "SCUBA-2 ITC ease of" in line:
+# 				print (line)
 				ratesc2itc = ratings[(line.split(":"))[1].strip()]
-			if "heterodyne ITC" in line: ####
+			if "heterodyne ITC ease" in line:
 				ratehetitc = ratings[(line.split(":"))[1].strip()]
-			if "observatory staff support" in line: ####
+			if "observatory staff support" in line:
 				ratepross = ratings[(line.split(":"))[1].strip()]
 				
 			## JCMT OT - MSB PREPARATION
@@ -196,14 +197,15 @@ for x in myfiles:
 	 			rateweb = ratings[(line.split(":"))[1].strip()] 		
 
 		# saving the ratings from each file into my new table:
-		if percom is not None:
+		print (hourscom)
+		if hourscom is not None:
 		 	t.add_row((percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 # 	 	t.add_row((projid,percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 
 	 		 	
 print(t)
 
-#print(t.keys())
+print(t.keys())
 
 
 # -------------------------------------------- #
@@ -239,7 +241,7 @@ plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-proposals-
 
 ## JCMT OT - MSB PREPARATION - bar chart
 
-otnames = np.array(['rateotinstall','rateotease','rateotdocs','rateotsupport'])
+otnames = np.array(['Install','Ease','Documents','Support'])
 meanvaluesot = np.array([np.nanmean(t['rateotinstall']),np.nanmean(t['rateotease']),np.nanmean(t['rateotdocs']),np.nanmean(t['rateotsupport'])])
 minvaluesot = np.array([np.nanmin(t['rateotinstall']),np.nanmin(t['rateotease']),np.nanmin(t['rateotdocs']),np.nanmin(t['rateotsupport'])])
 maxvaluesot = np.array([np.nanmax(t['rateotinstall']),np.nanmax(t['rateotease']),np.nanmax(t['rateotdocs']),np.nanmax(t['rateotsupport'])])
@@ -251,7 +253,7 @@ fig = plt.figure()
 y_pos = np.arange(len(otnames)) # make an array from 0 to length or the number of bars needed
 x_pos = (0,1,2,3)
 x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
-plt.barh(y_pos, meanvaluesot, align='center', color='yellow', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.barh(y_pos, meanvaluesot, align='center', color='orange', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
 plt.yticks(y_pos, otnames)
 plt.xticks(x_pos, x_words)
 plt.title('OT User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
@@ -259,7 +261,28 @@ plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-ot-{0}{1}.
 
 ## DATA ACQUISITION/DATA REDUCTION - bar chat
 
+drnames = np.array(['OMP Download','CADC Cownload','Install','Starlink','Het Docs','SCUBA-2 Docs','ORACDR','Science Product'])
+meanvaluesdr = np.array([np.nanmean(t['rateompdownload']),np.nanmean(t['ratecadcdownload']),np.nanmean(t['ratestarinstall']),np.nanmean(t['ratestarlink']),np.nanmean(t['ratehetdocs']),np.nanmean(t['ratesc2docs']),np.nanmean(t['rateoracdr']),np.nanmean(t['ratescienceproduct'])])
+minvaluesdr = np.array([np.nanmin(t['rateompdownload']),np.nanmin(t['ratecadcdownload']),np.nanmin(t['ratestarinstall']),np.nanmin(t['ratestarlink']),np.nanmin(t['ratehetdocs']),np.nanmin(t['ratesc2docs']),np.nanmin(t['rateoracdr']),np.nanmin(t['ratescienceproduct'])])
+maxvaluesdr = np.array([np.nanmax(t['rateompdownload']),np.nanmax(t['ratecadcdownload']),np.nanmax(t['ratestarinstall']),np.nanmax(t['ratestarlink']),np.nanmax(t['ratehetdocs']),np.nanmax(t['ratesc2docs']),np.nanmax(t['rateoracdr']),np.nanmax(t['ratescienceproduct'])])
+
+mindiff = meanvaluesdr - minvaluesdr
+maxdiff = maxvaluesdr - meanvaluesdr
+
+fig = plt.figure()
+y_pos = np.arange(len(drnames)) # make an array from 0 to length or the number of bars needed
+x_pos = (0,1,2,3)
+x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
+plt.barh(y_pos, meanvaluesdr, align='center', color='orange', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.yticks(y_pos, drnames)
+plt.xticks(x_pos, x_words)
+plt.title('Reduction & Analysis User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-dr-{0}{1}.pdf'.format(args.year,args.semester))
+
+
 ## SCIENCE
+
+
 
 ## GENERAL
 
