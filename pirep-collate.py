@@ -4,6 +4,9 @@ This script will go in and grab information from
 a pi report form collate all the information and 
 produce stats/plots for board reports/those interested
 
+This is not done on a strict by semester basis but is good enough for 
+the purposes of tracking user satisfaction.
+
 Note I do not do this by region it only matters that any issues
 are addressed and that we address areas that need it. 
 
@@ -200,7 +203,7 @@ for x in myfiles:
 	 		 	
 print(t)
 
-print(t.keys())
+#print(t.keys())
 
 
 # -------------------------------------------- #
@@ -214,12 +217,51 @@ import matplotlib
 matplotlib.use('agg')
 from matplotlib import pyplot as plt
 
+## PROPOSAL SYSTEM RATINGS - bar chart 
 
-print ("number of respondants = {0}".format(len(t['Completion'])))
-print ("Completion median = {0}".format(np.median(t['Completion'])))
-print ("Completion min= {0}".format(np.min(t['Completion'])))
-print ("Completion max = {0}".format(np.max(t['Completion'])))
-print ("Completion std = {0}".format(np.std(t['Completion'])))
+proposalsnames = np.array(['Proposal Ease','Documents','SCUBA-2 ITC','Het ITC','Process'])
+meanvaluesproposals = np.array([np.nanmean(t['rateproposalease']),np.nanmean(t['ratepropdocs']),np.nanmean(t['ratesc2itc']),np.nanmean(t['ratehetitc']),np.nanmean(t['ratepross'])])
+minvaluesproposals = np.array([np.nanmin(t['rateproposalease']),np.nanmin(t['ratepropdocs']),np.nanmin(t['ratesc2itc']),np.nanmin(t['ratehetitc']),np.nanmin(t['ratepross'])])
+maxvaluesproposals = np.array([np.nanmax(t['rateproposalease']),np.nanmax(t['ratepropdocs']),np.nanmax(t['ratesc2itc']),np.nanmax(t['ratehetitc']),np.nanmax(t['ratepross'])])
+
+mindiff = meanvaluesproposals - minvaluesproposals  
+maxdiff = maxvaluesproposals - meanvaluesproposals
+
+fig = plt.figure()
+y_pos = np.arange(len(proposalsnames)) # make an array from 0 to length or the number of bars needed
+x_pos = (0,1,2,3)
+x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
+plt.barh(y_pos, meanvaluesproposals, align='center', color='orange', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.yticks(y_pos, proposalsnames)
+plt.xticks(x_pos, x_words)
+plt.title('Proposal User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-proposals-{0}{1}.pdf'.format(args.year,args.semester))
+
+## JCMT OT - MSB PREPARATION - bar chart
+
+otnames = np.array(['rateotinstall','rateotease','rateotdocs','rateotsupport'])
+meanvaluesot = np.array([np.nanmean(t['rateotinstall']),np.nanmean(t['rateotease']),np.nanmean(t['rateotdocs']),np.nanmean(t['rateotsupport'])])
+minvaluesot = np.array([np.nanmin(t['rateotinstall']),np.nanmin(t['rateotease']),np.nanmin(t['rateotdocs']),np.nanmin(t['rateotsupport'])])
+maxvaluesot = np.array([np.nanmax(t['rateotinstall']),np.nanmax(t['rateotease']),np.nanmax(t['rateotdocs']),np.nanmax(t['rateotsupport'])])
+
+mindiff = meanvaluesot - minvaluesot
+maxdiff = maxvaluesot - meanvaluesot
+
+fig = plt.figure()
+y_pos = np.arange(len(otnames)) # make an array from 0 to length or the number of bars needed
+x_pos = (0,1,2,3)
+x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
+plt.barh(y_pos, meanvaluesot, align='center', color='yellow', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.yticks(y_pos, otnames)
+plt.xticks(x_pos, x_words)
+plt.title('OT User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-ot-{0}{1}.pdf'.format(args.year,args.semester))
+
+## DATA ACQUISITION/DATA REDUCTION - bar chat
+
+## SCIENCE
+
+## GENERAL
 
 fig = plt.figure()
 plt.scatter(t['Completion'], t['HoursObtained'])
@@ -227,4 +269,20 @@ plt.title('PI rep my first try')
 plt.xlabel('Completion (%)')
 plt.ylabel('Hours Obtained (hrs)')
 plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep.pdf')
+
+
+fig = plt.figure()
+plt.legend()
+plt.scatter(t['Completion'], t['rateproposalease'], label='prop ease', marker='x')
+plt.scatter(t['Completion'], t['ratescienceproduct'], label='science product', marker='+')
+plt.title('PI rep my first try')
+plt.xlabel('Completion (%)')
+plt.ylabel('ranking')
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep2.pdf')
+
+
+
+
+
+
 plt.close(fig)
