@@ -79,8 +79,6 @@ from glob import glob
 
 filenames = [os.path.basename(x) for x in glob(pth+"pirep_*.txt")]
 
-#print(type(filenames))
-
 myfiles=[]
 
 
@@ -88,9 +86,9 @@ for x in filenames:
 	timestamp = x[6:16] # only correct for pirep	
 #	print (x,timestamp)
 	if unixstarttime <= int(timestamp) <= unixendtime:
-		print ("pirep_{0}.txt".format(timestamp))
+# 		print ("pirep_{0}.txt".format(timestamp))
 		myfiles.append("{0}pirep_{1}.txt".format(pth,timestamp))
-print (myfiles)
+# print (myfiles)
 
 	
 # -------------------------------------------- #
@@ -106,16 +104,16 @@ ratings = {'not applicable': None, 'very dissatisfied': 0, 'dissatisfied': 1, 's
 from astropy.table import Table, Column
 import numpy as np
 
+### current bug - cannot add the project id to the output table - format issue seems to be the problem
+
 t = Table()
-t = Table(names=('Completion', 'HoursRemaining', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
-# t = Table(names=('projid','Completion', 'HoursRemaining', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('str','float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
+t = Table(names=('Completion', 'HoursObtained', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
+# t = Table(names=('projid','Completion', 'HoursObtained', 'rateproposalease', 'ratepropdocs', 'ratesc2itc', 'ratehetitc', 'ratepross', 'rateotinstall', 'rateotease','rateotdocs','rateotsupport','rateompdownload','ratecadcdownload','ratestarinstall','ratestarlink','ratehetdocs','ratesc2docs','rateoracdr','ratescienceproduct','ratedataquality','ratecompletion','ratepublicationprob','ratefop','rateomp','rateweb'), dtype=('str','float',float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float))
 
-
-# maybe need to define a function to turn a line into a rating.
 
 for x in myfiles:
 	with open(x) as input_data:
-		print (x)
+ 		print (x)
 		# setting all variables to None before going into loop
 		projid=percom=hourscom=rateproposalease=ratepropdocs=ratesc2itc=ratehetitc=ratepross=rateotinstall=rateotease=rateotdocs=rateotsupport=rateompdownload=ratecadcdownload=ratestarinstall=ratestarlink=ratehetdocs=ratesc2docs=rateoracdr=ratescienceproduct=ratedataquality=ratecompletion=ratepublicationprob=ratefop=rateomp=rateweb=None
 		for line in input_data:
@@ -195,13 +193,14 @@ for x in myfiles:
 	 			rateweb = ratings[(line.split(":"))[1].strip()] 		
 
 		# saving the ratings from each file into my new table:
-	 	t.add_row((percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
+		if percom is not None:
+		 	t.add_row((percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 # 	 	t.add_row((projid,percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 
 	 		 	
 print(t)
 
-
+print(t.keys())
 
 
 # -------------------------------------------- #
@@ -211,3 +210,21 @@ print(t)
 # in essence I want one plot to show median value (as a bar) and SD (as an error bar) for each rating.
 
 
+import matplotlib 
+matplotlib.use('agg')
+from matplotlib import pyplot as plt
+
+
+print ("number of respondants = {0}".format(len(t['Completion'])))
+print ("Completion median = {0}".format(np.median(t['Completion'])))
+print ("Completion min= {0}".format(np.min(t['Completion'])))
+print ("Completion max = {0}".format(np.max(t['Completion'])))
+print ("Completion std = {0}".format(np.std(t['Completion'])))
+
+fig = plt.figure()
+plt.scatter(t['Completion'], t['HoursObtained'])
+plt.title('PI rep my first try')
+plt.xlabel('Completion (%)')
+plt.ylabel('Hours Obtained (hrs)')
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep.pdf')
+plt.close(fig)
