@@ -84,7 +84,6 @@ filenames = [os.path.basename(x) for x in glob(pth+"pirep_*.txt")]
 
 myfiles=[]
 
-
 for x in filenames:
 	timestamp = x[6:16] # only correct for pirep	
 #	print (x,timestamp)
@@ -98,6 +97,7 @@ for x in filenames:
 #      grabbing info from report files         #
 # -------------------------------------------- #	
 
+#first a dictionary of ratings and corresponding values
 ratings = {'not applicable': None, 'very dissatisfied': 0, 'dissatisfied': 1, 'satisfied': 2, 'very satisfied': 3, 'very useful':3, 'in prep':3}
 
 
@@ -197,7 +197,7 @@ for x in myfiles:
 	 			rateweb = ratings[(line.split(":"))[1].strip()] 		
 
 		# saving the ratings from each file into my new table:
-		print (hourscom)
+# 		print (hourscom)
 		if hourscom is not None:
 		 	t.add_row((percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
 # 	 	t.add_row((projid,percom,hourscom,rateproposalease,ratepropdocs,ratesc2itc,ratehetitc,ratepross,rateotinstall,rateotease,rateotdocs,rateotsupport,rateompdownload,ratecadcdownload,ratestarinstall,ratestarlink,ratehetdocs,ratesc2docs,rateoracdr,ratescienceproduct,ratedataquality,ratecompletion,ratepublicationprob,ratefop,rateomp,rateweb))
@@ -205,14 +205,14 @@ for x in myfiles:
 	 		 	
 print(t)
 
-print(t.keys())
+# print(t.keys())
 
 
 # -------------------------------------------- #
 #      plotting info from report files         #
 # -------------------------------------------- #
 
-# in essence I want one plot to show median value (as a bar) and SD (as an error bar) for each rating.
+# in essence I want one plot to show median value (as a bar) and min/max (as an error bar) for each rating.
 
 
 import matplotlib 
@@ -237,7 +237,7 @@ plt.barh(y_pos, meanvaluesproposals, align='center', color='orange', alpha=0.7, 
 plt.yticks(y_pos, proposalsnames)
 plt.xticks(x_pos, x_words)
 plt.title('Proposal User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
-plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-proposals-{0}{1}.pdf'.format(args.year,args.semester))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/{0}{1}-pirep-bar-proposals.pdf'.format(args.year,args.semester))
 
 ## JCMT OT - MSB PREPARATION - bar chart
 
@@ -257,7 +257,7 @@ plt.barh(y_pos, meanvaluesot, align='center', color='orange', alpha=0.7, xerr=(m
 plt.yticks(y_pos, otnames)
 plt.xticks(x_pos, x_words)
 plt.title('OT User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
-plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-ot-{0}{1}.pdf'.format(args.year,args.semester))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/{0}{1}-pirep-bar-ot.pdf'.format(args.year,args.semester))
 
 ## DATA ACQUISITION/DATA REDUCTION - bar chat
 
@@ -277,14 +277,50 @@ plt.barh(y_pos, meanvaluesdr, align='center', color='orange', alpha=0.7, xerr=(m
 plt.yticks(y_pos, drnames)
 plt.xticks(x_pos, x_words)
 plt.title('Reduction & Analysis User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
-plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep-bar-dr-{0}{1}.pdf'.format(args.year,args.semester))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/{0}{1}-pirep-bar-dr.pdf'.format(args.year,args.semester))
 
 
 ## SCIENCE
 
+sciencenames = np.array(['Data Quality','Completion','Publication Prob'])
+meanvaluesscience = np.array([np.nanmean(t['ratedataquality']),np.nanmean(t['ratecompletion']),np.nanmean(t['ratepublicationprob'])])
+minvaluesscience = np.array([np.nanmin(t['ratedataquality']),np.nanmin(t['ratecompletion']),np.nanmin(t['ratepublicationprob'])])
+maxvaluesscience = np.array([np.nanmax(t['ratedataquality']),np.nanmax(t['ratecompletion']),np.nanmax(t['ratepublicationprob'])])
 
+mindiff = meanvaluesscience - minvaluesscience
+maxdiff = maxvaluesscience - meanvaluesscience
+
+fig = plt.figure()
+y_pos = np.arange(len(sciencenames)) # make an array from 0 to length or the number of bars needed
+x_pos = (0,1,2,3)
+x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
+plt.barh(y_pos, meanvaluesscience, align='center', color='orange', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.yticks(y_pos, sciencenames)
+plt.xticks(x_pos, x_words)
+plt.title('Science User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/{0}{1}-pirep-bar-science.pdf'.format(args.year,args.semester))
 
 ## GENERAL
+
+gennames = np.array(['FOP','OMP Pages','Web site'])
+meanvaluesgen = np.array([np.nanmean(t['ratefop']),np.nanmean(t['rateomp']),np.nanmean(t['rateweb'])])
+minvaluesgen = np.array([np.nanmin(t['ratefop']),np.nanmin(t['rateomp']),np.nanmin(t['rateweb'])])
+maxvaluesgen = np.array([np.nanmax(t['ratefop']),np.nanmax(t['rateomp']),np.nanmax(t['rateweb'])])
+
+mindiff = meanvaluesgen - minvaluesgen
+maxdiff = maxvaluesgen - meanvaluesgen
+
+fig = plt.figure()
+y_pos = np.arange(len(gennames)) # make an array from 0 to length or the number of bars needed
+x_pos = (0,1,2,3)
+x_words = ('very dissatisfied','dissatisfied','satisfied','very satisfied')
+plt.barh(y_pos, meanvaluesgen, align='center', color='orange', alpha=0.7, xerr=(mindiff,maxdiff),ecolor='grey')
+plt.yticks(y_pos, gennames)
+plt.xticks(x_pos, x_words)
+plt.title('General User Feedback for {0}{1} ({2})'.format(args.year,args.semester,len(t['Completion'])))
+plt.savefig('/home/hparsons/WWW/operations/reports/pireport/{0}{1}-pirep-bar-gen.pdf'.format(args.year,args.semester))
+
+# following can only be produced from 2016B onwards (when started recording completion)
 
 fig = plt.figure()
 plt.scatter(t['Completion'], t['HoursObtained'])
@@ -292,7 +328,6 @@ plt.title('PI rep my first try')
 plt.xlabel('Completion (%)')
 plt.ylabel('Hours Obtained (hrs)')
 plt.savefig('/home/hparsons/WWW/operations/reports/pireport/pirep.pdf')
-
 
 fig = plt.figure()
 plt.legend()
