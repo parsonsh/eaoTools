@@ -57,9 +57,21 @@ This script will grab all data associated with a project and produce output file
 
 * requires OMP database access (i.e. only runs at EAO)
 
+###  obsrep-collate.py
+
+Script to collate the information produced by the observer report form and produce stats/plots by semester:
+
+```
+python obsrep-collate.py -y 2017 -s A
+```
+
 ### pirep-collate.py
 
-Script to collate the information produced by the pi reports and produce stats/plots by semester
+Script to collate the information produced by the pi reports and produce stats/plots by semester:
+
+```
+python pirep-collate.py -y 2017 -s A
+```
 
 ### physical-parameters.py
 
