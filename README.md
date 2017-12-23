@@ -57,6 +57,10 @@ This script will grab all data associated with a project and produce output file
 
 * requires OMP database access (i.e. only runs at EAO)
 
+### investigating-harp.ipynb
+
+Script to plot up HARP data in python for my paper G0.55-0.85
+
 ###  obsrep-collate.py
 
 Script to collate the information produced by the observer report form and produce stats/plots by semester:
